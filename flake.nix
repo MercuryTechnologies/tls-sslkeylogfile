@@ -16,28 +16,34 @@
 
   nixConfig.allow-import-from-derivation = true; # cabal2nix uses IFD
 
-  outputs = { self, nixpkgs, flake-utils, pre-commit-hooks }:
+  outputs =
+    {
+      self,
+      nixpkgs,
+      flake-utils,
+      pre-commit-hooks,
+    }:
     let
       ghcVer = "ghc96";
       makeHaskellOverlay = overlay: final: prev: {
         haskell = prev.haskell // {
           packages = prev.haskell.packages // {
             ${ghcVer} = prev.haskell.packages."${ghcVer}".override (oldArgs: {
-              overrides =
-                prev.lib.composeExtensions (oldArgs.overrides or (_: _: { }))
-                  (overlay prev);
+              overrides = prev.lib.composeExtensions (oldArgs.overrides or (_: _: { })) (overlay prev);
             });
           };
         };
       };
 
-      out = system:
+      out =
+        system:
         let
           pkgs = import nixpkgs {
             inherit system;
             overlays = [ self.overlays.default ];
             config.allowBroken = true;
           };
+          inherit (pkgs) lib;
 
         in
         {
@@ -71,6 +77,12 @@
                 # ormolu.defaultExtensions = [
                 #   "ImportQualifiedPost"
                 # ];
+
+                reuse = {
+                  enable = true;
+                  package = pkgs.reuse;
+                  entry = "${lib.getExe pkgs.reuse} lint-file";
+                };
               };
             };
           };
@@ -79,31 +91,37 @@
           inherit pkgs;
 
           devShells.default =
-            let haskellPackages = pkgs.haskell.packages.${ghcVer};
+            let
+              haskellPackages = pkgs.haskell.packages.${ghcVer};
             in
             haskellPackages.shellFor {
               packages = p: [ self.packages.${system}.tls-sslkeylogfile ];
               withHoogle = true;
-              buildInputs = [
-                haskellPackages.haskell-language-server
-                haskellPackages.fourmolu
-                haskellPackages.cabal-install
-                haskellPackages.fast-tags
-                haskellPackages.hpack
-              ] ++ [
-                pkgs.sqlite
-              ];
+              buildInputs =
+                [
+                  haskellPackages.haskell-language-server
+                  haskellPackages.fourmolu
+                  haskellPackages.cabal-install
+                  haskellPackages.fast-tags
+                  haskellPackages.hpack
+                ]
+                ++ [
+                  pkgs.sqlite
+                  pkgs.reuse
+                ];
               shellHook = self.checks.${system}.pre-commit-check.shellHook;
             };
         };
     in
-    flake-utils.lib.eachDefaultSystem out // {
+    flake-utils.lib.eachDefaultSystem out
+    // {
       # this stuff is *not* per-system
       overlays = {
-        default = makeHaskellOverlay (prev: hfinal: hprev:
-          {
+        default = makeHaskellOverlay (
+          prev: hfinal: hprev: {
             tls-sslkeylogfile = hprev.callCabal2nix "tls-sslkeylogfile" ./. { };
-          });
+          }
+        );
       };
     };
 }
