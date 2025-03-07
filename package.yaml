@@ -1,0 +1,107 @@
+# SPDX-FileCopyrightText: 2025 Mercury Technologies, Inc
+#
+# SPDX-License-Identifier: MIT
+
+name: tls-sslkeylogfile
+version: 0.1.0.0
+synopsis: SSLKEYLOGFILE support for Haskell
+description: See README at <https://github.com/MercuryTechnologies/tls-sslkeylogfile#readme>.
+category: Network
+github: MercuryTechnologies/tls-sslkeylogfile
+
+# due to an hpack bug, this is not auto figured out based on the fancy tested-with syntax
+verbatim:
+  cabal-version: 3.0
+
+maintainer: Jade Lovelace <jadel@mercury.com>
+extra-source-files:
+  - CHANGELOG.md
+
+license: MIT
+
+# Please keep in sync with .github/workflows/haskell.yml :)
+tested-with: GHC == { 9.2, 9.4, 9.6, 9.8, 9.10 }
+
+dependencies:
+  - base
+  - crypton-connection
+  - crypton-x509-system
+  - data-default
+  - http-client
+  - http-client-tls
+  - tls (>= 1.8 && < 2.0) || (>= 2.0 && < 2.3)
+
+library:
+  source-dirs: src
+
+# Test suite
+# FIXME(jadel): tests
+# tests:
+#   test:
+#     main: Main.hs
+#     source-dirs:
+#       - test
+#     ghc-options:
+#       - -threaded
+#       - -rtsopts
+#       - -with-rtsopts=-N
+#       - -Wno-incomplete-uni-patterns # Failing at runtime just means failing the test, which is ok
+#       - -O0
+#     dependencies:
+#       - HUnit
+#       - hspec
+#     build-tools:
+#       - hspec-discover
+
+# from https://medium.com/mercury-bank/enable-all-the-warnings-a0517bc081c3
+ghc-options:
+  - -Weverything
+  - -Wno-missing-exported-signatures # missing-exported-signatures turns off the more strict -Wmissing-signatures. See https://ghc.haskell.org/trac/ghc/ticket/14794#ticket
+  - -Wno-missing-export-lists # Requires explicit export lists for every module, a pain for large modules
+  - -Wno-missing-import-lists # Requires explicit imports of _every_ function (e.g. '$'); too strict
+  - -Wno-missed-specialisations # When GHC can't specialize a polymorphic function. No big deal and requires fixing underlying libraries to solve.
+  - -Wno-all-missed-specialisations # See missed-specialisations
+  - -Wno-unsafe # Don't use Safe Haskell warnings
+  - -Wno-missing-local-signatures # Warning for polymorphic local bindings. Don't think this is an issue
+  - -Wno-monomorphism-restriction # Don't warn if the monomorphism restriction is used
+  - -Wno-missing-safe-haskell-mode # Cabal isn’t setting this currently (introduced in GHC 8.10)
+  - -Wno-prepositive-qualified-module # Cabal’s generate Path_*.hs doesn’t do this (fixed in https://github.com/haskell/cabal/pull/7352)
+  - -Wno-unused-packages # Some tooling gives this error
+  - -Wno-missing-kind-signatures # Warns on literally every type
+  - -Wno-implicit-prelude # We don't need a custom prelude here
+
+default-extensions:
+  - AllowAmbiguousTypes
+  - BlockArguments
+  - DataKinds
+  - DeriveAnyClass
+  - DeriveFoldable
+  - DeriveFunctor
+  - DeriveGeneric
+  - DeriveLift
+  - DeriveTraversable
+  - DerivingVia
+  - FlexibleContexts
+  - FlexibleInstances
+  - FunctionalDependencies
+  - GADTs
+  - GeneralizedNewtypeDeriving
+  - ImportQualifiedPost
+  - InstanceSigs
+  - LambdaCase
+  - MonoLocalBinds
+  - MultiWayIf
+  - NamedFieldPuns
+  - NumericUnderscores
+  - OverloadedStrings
+  - PatternSynonyms
+  - PolyKinds
+  - RankNTypes
+  - RecordWildCards
+  - RecursiveDo
+  - ScopedTypeVariables
+  - StandaloneDeriving
+  - StandaloneKindSignatures
+  - TypeApplications
+  - TypeFamilies
+  - ViewPatterns

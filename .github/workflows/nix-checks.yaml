@@ -1,0 +1,21 @@
+# SPDX-License-Identifier: MIT
+# SPDX-FileCopyrightText: 2025 Mercury Technologies, Inc
+name: "Run nix checks"
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+jobs:
+  check_fourmolu:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Nix
+        uses: cachix/install-nix-action@v27
+        with:
+          extra_nix_config: |
+            extra-experimental-features = nix-command flakes
+      - name: Run all nix checks
+        run: |
+          nix build --print-build-logs --keep-going ".#checks.x86_64-linux.all"
