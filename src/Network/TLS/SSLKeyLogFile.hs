@@ -17,6 +17,13 @@
 -- - See: <https://www.ietf.org/archive/id/draft-thomson-tls-keylogfile-00.html>
 -- - See: <https://jade.fyi/blog/announcing-clipper/>
 module Network.TLS.SSLKeyLogFile (
+  -- * Demo and workflow
+
+  -- | There is a demonstration of the workflow of using tls-sslkeylogfile in
+  -- the [README on GitHub](https://github.com/MercuryTechnologies/tls-sslkeylogfile#readme)
+  -- including all the steps necessary to capture packets and analyze their
+  -- decrypted versions.
+
   -- * Security considerations
 
   -- | See the RFC: <https://www.ietf.org/archive/id/draft-thomson-tls-keylogfile-00.html#name-security-considerations-8>

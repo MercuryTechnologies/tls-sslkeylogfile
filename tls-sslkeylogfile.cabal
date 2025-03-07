@@ -23,6 +23,11 @@ source-repository head
   type: git
   location: https://github.com/MercuryTechnologies/tls-sslkeylogfile
 
+flag examples
+  description: Build example executables.
+  manual: True
+  default: False
+
 library
   exposed-modules:
       Network.TLS.SSLKeyLogFile
@@ -78,15 +83,14 @@ library
     , tls >=1.8 && <2.0 || >=2.0 && <2.3
   default-language: Haskell2010
 
-test-suite test
-  type: exitcode-stdio-1.0
-  main-is: Main.hs
+executable keylogfile-demo
+  main-is: Demo.hs
   other-modules:
       Paths_tls_sslkeylogfile
   autogen-modules:
       Paths_tls_sslkeylogfile
   hs-source-dirs:
-      test
+      examples/demo
   default-extensions:
       AllowAmbiguousTypes
       BlockArguments
@@ -122,20 +126,17 @@ test-suite test
       TypeApplications
       TypeFamilies
       ViewPatterns
-  ghc-options: -Weverything -Wno-missing-exported-signatures -Wno-missing-export-lists -Wno-missing-import-lists -Wno-missed-specialisations -Wno-all-missed-specialisations -Wno-unsafe -Wno-missing-local-signatures -Wno-monomorphism-restriction -Wno-missing-safe-haskell-mode -Wno-prepositive-qualified-module -Wno-unused-packages -Wno-missing-kind-signatures -Wno-implicit-prelude -threaded -rtsopts -with-rtsopts=-N -Wno-incomplete-uni-patterns -O0
-  build-tool-depends:
-      hspec-discover:hspec-discover
+  ghc-options: -Weverything -Wno-missing-exported-signatures -Wno-missing-export-lists -Wno-missing-import-lists -Wno-missed-specialisations -Wno-all-missed-specialisations -Wno-unsafe -Wno-missing-local-signatures -Wno-monomorphism-restriction -Wno-missing-safe-haskell-mode -Wno-prepositive-qualified-module -Wno-unused-packages -Wno-missing-kind-signatures -Wno-implicit-prelude
   build-depends:
-      HUnit
-    , base
+      base
+    , bytestring
     , crypton-connection
     , crypton-x509-system
     , data-default
-    , hedgehog
-    , hspec
-    , hspec-hedgehog
     , http-client
     , http-client-tls
-    , string-variants
     , tls >=1.8 && <2.0 || >=2.0 && <2.3
+    , tls-sslkeylogfile
   default-language: Haskell2010
+  if !flag(examples)
+    buildable: False

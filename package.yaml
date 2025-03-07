@@ -34,6 +34,19 @@ dependencies:
 library:
   source-dirs: src
 
+executables:
+  keylogfile-demo:
+    source-dirs: examples/demo
+    main: Demo.hs
+
+    dependencies:
+      - bytestring
+      - tls-sslkeylogfile
+
+    when:
+    - condition: '!flag(examples)'
+      buildable: false
+
 # Test suite
 # FIXME(jadel): tests
 # tests:
@@ -52,6 +65,11 @@ library:
 #       - hspec
 #     build-tools:
 #       - hspec-discover
+flags:
+  examples:
+    description: Build example executables.
+    manual: true
+    default: false
 
 # from https://medium.com/mercury-bank/enable-all-the-warnings-a0517bc081c3
 ghc-options:

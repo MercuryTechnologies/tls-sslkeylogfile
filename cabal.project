@@ -3,3 +3,5 @@
 -- SPDX-License-Identifier: MIT
 
 packages: .
+-- For local dev we always want examples
+flags: +examples
