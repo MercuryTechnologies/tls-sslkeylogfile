@@ -16,6 +16,7 @@ verbatim:
 maintainer: Jade Lovelace <jadel@mercury.com>
 extra-source-files:
   - CHANGELOG.md
+  - README.md
 
 license: MIT
 

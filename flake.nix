@@ -44,7 +44,7 @@
             config.allowBroken = true;
           };
           inherit (pkgs) lib;
-
+          haskellPackages = pkgs.haskell.packages.${ghcVer};
         in
         {
           packages = rec {
@@ -83,6 +83,13 @@
                   package = pkgs.reuse;
                   entry = "${lib.getExe pkgs.reuse} lint-file";
                 };
+
+                hpack = {
+                  enable = true;
+                  package = haskellPackages.hpack;
+                  files = ''^package\.yaml$'';
+                  entry = "${lib.getExe haskellPackages.hpack}";
+                };
               };
             };
           };
@@ -90,27 +97,23 @@
           # for debugging
           inherit pkgs;
 
-          devShells.default =
-            let
-              haskellPackages = pkgs.haskell.packages.${ghcVer};
-            in
-            haskellPackages.shellFor {
-              packages = p: [ self.packages.${system}.tls-sslkeylogfile ];
-              withHoogle = true;
-              buildInputs =
-                [
-                  haskellPackages.haskell-language-server
-                  haskellPackages.fourmolu
-                  haskellPackages.cabal-install
-                  haskellPackages.fast-tags
-                  haskellPackages.hpack
-                ]
-                ++ [
-                  pkgs.sqlite
-                  pkgs.reuse
-                ];
-              shellHook = self.checks.${system}.pre-commit-check.shellHook;
-            };
+          devShells.default = haskellPackages.shellFor {
+            packages = p: [ self.packages.${system}.tls-sslkeylogfile ];
+            withHoogle = true;
+            buildInputs =
+              [
+                haskellPackages.haskell-language-server
+                haskellPackages.fourmolu
+                haskellPackages.cabal-install
+                haskellPackages.fast-tags
+                haskellPackages.hpack
+              ]
+              ++ [
+                pkgs.sqlite
+                pkgs.reuse
+              ];
+            shellHook = self.checks.${system}.pre-commit-check.shellHook;
+          };
         };
     in
     flake-utils.lib.eachDefaultSystem out
