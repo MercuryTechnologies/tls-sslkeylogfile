@@ -24,7 +24,7 @@ license: MIT
 tested-with: GHC == { 9.2, 9.4, 9.6, 9.8, 9.10 }
 
 dependencies:
-  - base
+  - base >= 4.16 && < 4.22
   - crypton-connection
   - crypton-x509-system
   - data-default
